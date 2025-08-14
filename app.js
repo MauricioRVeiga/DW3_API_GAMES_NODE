@@ -1,36 +1,25 @@
 import express from "express";
+import mongoose from "mongoose";
 const app = express();
+import Game from "./models/Games.js";
+
 
 //configurando o express para aceitar JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+//iniciando a conexão com o banco de dados MongoDB
+mongoose.connect("mongodb://localhost:27017/api-thegames");
+
 //criando um retorno da api
-app.get("/", (req, res) => {
-  const games = [
-    {
-      title: "Diablo III",
-      year: 2012,
-      genre: "Action RPG",
-      platform: "PC",
-      price: 0,
-    },
-    {
-      title: "The Witcher 3",
-      year: 2015,
-      genre: "Action RPG",
-      platform: "PC",
-      price: 0,
-    },
-    {
-      title: "Stardew Valley",
-      year: 2016,
-      genre: "Simulation",
-      platform: "PC",
-      price: 0,
-    },
-  ];
-  res.json(games);
+app.get("/", async (req, res) => {
+  try {
+    const games = await Game.find()
+    res.status(200).json({games: games}); //Código 200 : Ok
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: "Erro ao conectar ao banco de dados" })
+  }
 });
 
 //rodando a api na porta 4000
