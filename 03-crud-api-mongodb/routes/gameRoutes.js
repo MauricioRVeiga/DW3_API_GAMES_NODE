@@ -9,3 +9,7 @@ gameRoutes.get("/games", gameController.getAllGames);
 // ENDPOINT PARA CADASTRAR OS JOGOS
 gameRoutes.post("/games", gameController.createGame);
 export default gameRoutes;
+
+
+//// ENDPOINT PARA ALTERAR JOGOS// ENDPOINT PARA ALTERAR JOGOS
+gameRoutes.put("/games/:id", gameController.updateGame);

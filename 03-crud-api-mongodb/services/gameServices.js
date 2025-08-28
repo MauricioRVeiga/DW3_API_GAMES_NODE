@@ -27,6 +27,32 @@ async create(title, year, genre, platform, price) {
         console.log(error)
     }
 }
+// Deletando registros no banco
+async delete(id) {
+    try {
+        await Game.findByIdAndDelete(id); //BUSCA PELO ID E DELETA
+        console.log(`Game com a id: ${id} deletado com sucesso!`);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+//Alterando registros no banco
+async update(id, title, year, genre, platform, price) {
+    try {
+        await Game.findByIdAndUpdate(id, {
+            title,
+            year,
+            genre,
+            platform,
+            price,
+        });
+        console.log(`Game com a id: ${id} atualizado com sucesso!`);
+    } catch (error) {
+        console.log(error);
+    }
+
+}
 }
 
 export default new GameServices();
