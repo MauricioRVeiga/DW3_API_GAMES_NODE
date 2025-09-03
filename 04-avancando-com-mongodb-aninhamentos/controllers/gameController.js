@@ -15,8 +15,8 @@ const getAllGames = async (req, res) => {
 //função para cadastrar jogos
 const createGame = async (req, res) => {
   try {
-    const { title, year, genre, platform, price } = req.body;
-    await gameServices.create(title, year, genre, platform, price);
+    const { title, year, price, description } = req.body;
+    await gameServices.create(title, year, price, description);
     res.status(201).json({ message: "Jogo criado com sucesso!" }); //Código 201 : Created - Recurso criado com sucesso
   } catch (error) {
     res.status(500).json({ error: "Erro ao criar jogo." });
@@ -44,15 +44,14 @@ const updateGame = async (req, res) => {
   try {
     const id = req.params.id;
     if (mongoose.Types.ObjectId.isValid(id)) {
-      const { title, year, genre, platform, price } = req.body;
+      const { title, year, price, description } = req.body;
 
       const game = await gameServices.update(
         id,
         title,
         year,
-        genre,
-        platform,
-        price
+        price,
+        description
       );
       res.status(200).json({ message: "Jogo atualizado com sucesso!" });
     } else {
