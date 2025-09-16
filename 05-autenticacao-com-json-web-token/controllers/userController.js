@@ -1,18 +1,36 @@
 import userServices from "../services/userServices.js";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
-const JWTSecret = "paralelepido"; // Recomenda-se usar variável de ambiente
+dotenv.config(); 
+const JWTSecret = process.env.JWT_SECRET;
+
+//importando o bcrypt para fazer o hash de senha
+import bcrypt from "bcrypt";
 
 // função para criar um novo usuário
-
 const createUser = async (req, res) => {
   try {
     // Coletando os dados do corpo da requisição
     const { name, email, password } = req.body;
-    await userServices.Create(name, email, password);
+    // verificar se o usuário já existe
+    const user = await userServices.getOne(email);
+    // se não houve o usuario cadastrada 
+    if (user == undefined) {
+      // criando o hash da senha
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(password, salt);
+      //cadastrando o usuário
+      await userServices.Create(name, email, hash);
     res.status(201).json({ success: "Usuário criado com sucesso!" });
+
+    //se o usuario ja estiver cadastrado
+    } else {
+      res.status(409).json({ error: "Usuário já cadastrado." });
+    }
+    
   } catch (error) {
-    res.status(500).json({ message: "Erro ao criar usuário." });
+    res.status(500).json({ error: "Erro ao criar usuário." });
   }
 };
 
@@ -25,7 +43,11 @@ const loginUser = async (req, res) => {
     // se o usuario for encontrado
     if (user != undefined) {
       // Aqui seria interessante validar a senha, se o método getOne não faz isso
-      if (user.password == password) {
+      // comparando hash de senha
+
+      const correct = bcrypt.compareSync(password, user.password)
+      // se a senha estiver correta
+      if (correct) {
         // Gerando o token de autenticação
         jwt.sign(
           { id: user.id, email: user.email },

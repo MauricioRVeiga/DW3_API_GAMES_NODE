@@ -22,7 +22,7 @@ app.use("/", userRoutes);
 mongoose.connect("mongodb://localhost:27017/api-thegames");
 
 //rodando a api na porta 4000
-const port = 4000;
+const port = process.env.PORT || 4000;
 app.listen(port, () => {
   console.log(`API rodando em http://localhost:${port}`);
 });
